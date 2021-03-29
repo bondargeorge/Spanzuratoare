@@ -15,7 +15,7 @@
   </head>
   <body>
     <div class="container">
-      <div id= "lista"> 
+      <div id= "list"> 
       </div>
       <div class="card"  id="target">
         <div class="card-header">
@@ -26,6 +26,7 @@
           <form>
            <div class="form-group">
              <label>You can add your word below.</label>
+             <p id="demo"></p>
              <input type="text" class="form-control" id="word">
              <small class="form-text text-muted">Think of a complicated word, so your friend won't be able to guess it.</small> 
            </div>
@@ -34,7 +35,6 @@
       </div>
      </div>
     </div>
-    
 
     <!-- Optional JavaScript;-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
@@ -42,55 +42,84 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.min.js" integrity="sha384-nsg8ua9HAw1y0W1btsyWgBklPnCUAFLuTMS2G72MMONqmOymq585AcH49TLBQObG" crossorigin="anonymous"></script>
 
     <script>
-    var freq = [], letterNo = 0;
-    function startGame() {
-    	var word = $('#word').val();
-   		for (var i = 0; i < word.length; i++) {
-   			++freq[word[i]];
-   			++letterNo;
-   		}
-	    $('#lista').append(`<div class="container">
-	       <div class="card-body">
-	        <form id="formId">
-	         <div class="form-group">
-	           <label>Guess the word by introducing a single letter each time.</label>
-	           <input type="text" class="form-control" id="letterId">
-	         </div>
-	        <button type="submit" class="btn btn-secondary" onclick="return guessLetter()">Guess</button>
-	       </form>
-	      </div>
-	    `);
-	    $("#target").remove();
-	    return false;
-   }
-   var playerLife = 15;
-   function guessLetter() {
-    var letter = $('#letterId').val();
-    var word = $('#word').val();
-    var divClass = "card"; 
-    if (freq[letter]) {
-    	divClass += " alert-success";
-    	--letterNo;
-    } else {
-    	divClass += " alert-danger";
-    	--playerLife;
-    }
-    $('#lista').append(`
-       <div class="` + divClass + `">
-        <div class="card-body">
+      var guessingWord, remainingLetters, playerLife = 5, stop = 0;
+      function startGame() {
+        var word = $('#word').val();
+        guessingWord = word;
+        remainingLetters = word.length;
+        if (remainingLetters < 1) {
+          alert("Please enter a word");
+        } else {
+    	    $('#list').append(`<div class="container">
+    	       <div class="card-body">
+    	        <form id="formId">
+    	         <div class="form-group">
+                  <ol class="list-group list-group-numbered">
+                    <li class="list-group-item d-flex justify-content-between align-items-start">
+                      <div class="ms-2 me-auto">
+                        <div class="fw-bold">Lives</div>
+                        The number of lives you have left.
+                      </div>
+                      <span class="badge bg-primary rounded-pill" id="lives"></span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-start">
+                      <div class="ms-2 me-auto">
+                        <div class="fw-bold">Letters</div>
+                        The number of letters to be guessed.
+                      </div>
+                      <span class="badge bg-primary rounded-pill" id="guesses"></span>
+                    </li>
+                  </ol>
+    	           <label>Guess the word by introducing a single letter each time.</label>
+    	           <input type="text" class="form-control" id="letterId">
+    	         </div>
+    	        <button type="submit" class="btn btn-secondary" onclick="return guessLetter()">Guess</button>
+    	       </form>
+    	      </div>
+    	    `);
+    	    $("#target").remove();
+         } 
+  	    return false;
+      } 
+
+      function guessLetter() {
+        var letter = $('#letterId').val();
+        var divClass = "card";
+        var ok = 0;
+        if (letter.length !== 1) {
+           alert("Please enter a single letter");
+        } else {
+          for (var i = 0; i < guessingWord.length; i++) {
+            if (guessingWord[i] == letter) {
+               remainingLetters--;
+               ok = 1;
+            }
+          }
+        }
+        if (ok) {
+          divClass += " alert-success";
+        } else {
+          divClass += " alert-danger";
+          playerLife--;
+        } 
+        $('#list').append(`
+           <div class="` + divClass + `">
             <div class="card-body">
-            	<h5>` + letter + `</h5>
+                <div class="card-body">
+                   <h5>` + letter + `</h5>
+                 </div>
+             </div>
             </div>
-        </div>
-       </div>
-    `);
-    if (letterNo == 0) {
-    	alert("Congratulations! Player 2 won! You guessed the word! The word was " + word + ".");
-    } else if (playerLife == 0) {
-    	alert("Congratulations! Player 1 won! Player 2 wasn't able to guess your word!");
-    }
-    return false;
-   }
+         `);
+        $("#lives").text(playerLife);
+        $("#guesses").text(remainingLetters);
+        if (remainingLetters <= 0) {
+          alert("Congratulations! Player 2 won! You guessed the word! The word was " + guessingWord + ".");
+        } else if (playerLife <= 0) {
+          alert("Congratulations! Player 1 won! Player 2 wasn't able to guess your word! The word was " + guessingWord + ".");
+        }
+        return false;
+      }
     </script>
   </body>
 </html>
