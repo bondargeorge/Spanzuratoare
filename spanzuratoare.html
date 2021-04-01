@@ -72,10 +72,6 @@
       var elem2 = document.getElementById('target2');
       $(elem2).hide();
       var guessingWord, remainingLetters, playerLife = 5, stop = 0, guessedLetters = [];
-      for (var i = 0; i < word.length; i++) {
-        answerArray[i] = "_";
-      }
-
       function startGame() {
         var word = $('#word').val();
         guessingWord = word;
@@ -83,6 +79,9 @@
         if (remainingLetters < 1) {
           alert("Please enter a word");
         } else {
+          for (var i = 0; i < word.length; i++) {
+            guessedLetters[i] = "-";
+          }
           $(elem1).hide();
           $(elem2).show();
         } 
