@@ -34,6 +34,32 @@
         </form>
       </div>
      </div>
+     <div class="container" id="target2">
+      <div class="card-body">
+       <form id="formId">
+       <div class="form-group">
+        <ol class="list-group list-group-numbered">
+         <li class="list-group-item d-flex justify-content-between align-items-start">
+         <div class="ms-2 me-auto">
+         <div class="fw-bold">Lives</div>
+         The number of lives you have left.
+        </div>
+        <span class="badge bg-primary rounded-pill" id="lives"></span>
+         </li>
+          <li class="list-group-item d-flex justify-content-between align-items-start">
+          <div class="ms-2 me-auto">
+           <div class="fw-bold">Letters</div>
+            The number of letters to be guessed.
+           </div>
+          <span class="badge bg-primary rounded-pill" id="guesses"></span>
+          </li>
+          </ol>
+          <label>Guess the word by introducing a single letter each time.</label>
+          <input type="text" class="form-control" id="letterId">
+          </div>
+         <button type="submit" class="btn btn-secondary" onclick="return guessLetter()">Guess</button>
+       </form>
+      </div>
     </div>
 
     <!-- Optional JavaScript;-->
@@ -42,7 +68,14 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.min.js" integrity="sha384-nsg8ua9HAw1y0W1btsyWgBklPnCUAFLuTMS2G72MMONqmOymq585AcH49TLBQObG" crossorigin="anonymous"></script>
 
     <script>
-      var guessingWord, remainingLetters, playerLife = 5, stop = 0;
+      var elem1 = document.getElementById('target');
+      var elem2 = document.getElementById('target2');
+      $(elem2).hide();
+      var guessingWord, remainingLetters, playerLife = 5, stop = 0, guessedLetters = [];
+      for (var i = 0; i < word.length; i++) {
+        answerArray[i] = "_";
+      }
+
       function startGame() {
         var word = $('#word').val();
         guessingWord = word;
@@ -50,35 +83,9 @@
         if (remainingLetters < 1) {
           alert("Please enter a word");
         } else {
-    	    $('#list').append(`<div class="container">
-    	       <div class="card-body">
-    	        <form id="formId">
-    	         <div class="form-group">
-                  <ol class="list-group list-group-numbered">
-                    <li class="list-group-item d-flex justify-content-between align-items-start">
-                      <div class="ms-2 me-auto">
-                        <div class="fw-bold">Lives</div>
-                        The number of lives you have left.
-                      </div>
-                      <span class="badge bg-primary rounded-pill" id="lives"></span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-start">
-                      <div class="ms-2 me-auto">
-                        <div class="fw-bold">Letters</div>
-                        The number of letters to be guessed.
-                      </div>
-                      <span class="badge bg-primary rounded-pill" id="guesses"></span>
-                    </li>
-                  </ol>
-    	           <label>Guess the word by introducing a single letter each time.</label>
-    	           <input type="text" class="form-control" id="letterId">
-    	         </div>
-    	        <button type="submit" class="btn btn-secondary" onclick="return guessLetter()">Guess</button>
-    	       </form>
-    	      </div>
-    	    `);
-    	    $("#target").remove();
-         } 
+          $(elem1).hide();
+          $(elem2).show();
+        } 
   	    return false;
       } 
 
@@ -92,12 +99,14 @@
           for (var i = 0; i < guessingWord.length; i++) {
             if (guessingWord[i] == letter) {
                remainingLetters--;
+               guessedLetters[i] = guessingWord[i];
                ok = 1;
             }
           }
         }
         if (ok) {
           divClass += " alert-success";
+          alert(guessedLetters.join(" "));
         } else {
           divClass += " alert-danger";
           playerLife--;
