@@ -64,7 +64,7 @@
       <center>
          <font size="100"><p id="winningMessage" style="color:green"></p></font>
          <font size="80"><p id="guessedMessage"></p></font>
-         <font size="80"><p id="letterNoMessage" style="color:purple"></p></font>
+         <font size="20"><p id="letterNoMessage" style="color:purple"></p></font>
       </center>
     </div>
 
@@ -77,6 +77,26 @@
       var guessingWord, remainingLetters, playerLife = 5, guessedLetters = [], startGameComponent = document.getElementById('target'), guessingWordComponent = document.getElementById('target2');
       $(guessingWordComponent).hide();
 
+      function showGuessedLetters() {
+        return document.getElementById("guessedMessage").innerHTML = ("Guessed letters: " + guessedLetters.join(" "));
+      }
+
+      function showNumberOfLetters() {
+        return document.getElementById("letterNoMessage").innerHTML = ("The number of letters of the word you need to guess is: " + remainingLetters);
+      }
+
+      function player1WinningMessage() {
+        return document.getElementById("winningMessage").innerHTML = ("Congratulations! Player 1 won! Player 2 wasn't able to guess your word! The word was '" + guessingWord + "'. Play again?");
+      }
+
+      function player2WinningMessage() {
+        return document.getElementById("winningMessage").innerHTML = ("Congratulations! Player 2 won! You guessed the word! The word was '" + guessingWord + "'. Play again?");
+      }
+
+      function enableRestartButton() {
+        return document.getElementById("restartBtn").disabled = false;
+      }
+
       function startGame() {
         var word = $('#word').val();
         guessingWord = word;
@@ -87,9 +107,10 @@
           for (var i = 0; i < word.length; i++) {
             guessedLetters[i] = "-";
           }
-          document.getElementById("letterNoMessage").innerHTML = ("The number of letters of the word you need to guess is: " + remainingLetters);
           $(startGameComponent).hide();
           $(guessingWordComponent).show();
+          showNumberOfLetters();
+          showGuessedLetters();
         } 
   	    return false;
       } 
@@ -111,7 +132,7 @@
         }
         if (ok) {
           divClass += " alert-success";
-          document.getElementById("guessedMessage").innerHTML = ("Guessed letters: " + guessedLetters.join(" "));
+          showGuessedLetters();
         } else {
           divClass += " alert-danger";
           playerLife--;
@@ -128,11 +149,11 @@
         $("#lives").text(playerLife);
         $("#guesses").text(remainingLetters);
         if (remainingLetters <= 0) {
-           document.getElementById("winningMessage").innerHTML = ("Congratulations! Player 2 won! You guessed the word! The word was '" + guessingWord + "'. Play again?");
-            document.getElementById("restartBtn").disabled = false;
+          player2WinningMessage();
+          enableRestartButton();
         } else if (playerLife <= 0) {
-          document.getElementById("winningMessage").innerHTML = ("Congratulations! Player 1 won! Player 2 wasn't able to guess your word! The word was '" + guessingWord + "'. Play again?");
-           document.getElementById("restartBtn").disabled = false;
+          player1WinningMessage();
+          enableRestartButton();
         }
         return false;
       }
