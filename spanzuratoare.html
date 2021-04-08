@@ -77,20 +77,24 @@
       var guessingWord, remainingLetters, playerLife = 5, guessedLetters = [], startGameComponent = document.getElementById('target'), guessingWordComponent = document.getElementById('target2');
       $(guessingWordComponent).hide();
 
-      function showGuessedLetters() {
-        return document.getElementById("guessedMessage").innerHTML = ("Guessed letters: " + guessedLetters.join(" "));
+      function printCorrespondingMessage(showGuessedLetters, showNumberOfLetters, player1WinningMessage, player2WinningMessage) {
+        if (showGuessedLetters == 1) {
+          return document.getElementById("guessedMessage").innerHTML = ("Guessed letters: " + guessedLetters.join(" "));
+        } else if (showNumberOfLetters == 1) {
+          return document.getElementById("letterNoMessage").innerHTML = ("The number of letters of the word you need to guess is: " + remainingLetters);
+        } else if (player1WinningMessage == 1) {
+          return document.getElementById("winningMessage").innerHTML = ("Congratulations! Player 1 won! Player 2 wasn't able to guess your word! The word was '" + guessingWord + "'. Play again?");
+        } else if (player2WinningMessage == 1) {
+          return document.getElementById("winningMessage").innerHTML = ("Congratulations! Player 2 won! You guessed the word! The word was '" + guessingWord + "'. Play again?");
+        }
       }
 
-      function showNumberOfLetters() {
-        return document.getElementById("letterNoMessage").innerHTML = ("The number of letters of the word you need to guess is: " + remainingLetters);
+      function printLives(playerLife) {
+        return $("#lives").text(playerLife);
       }
 
-      function player1WinningMessage() {
-        return document.getElementById("winningMessage").innerHTML = ("Congratulations! Player 1 won! Player 2 wasn't able to guess your word! The word was '" + guessingWord + "'. Play again?");
-      }
-
-      function player2WinningMessage() {
-        return document.getElementById("winningMessage").innerHTML = ("Congratulations! Player 2 won! You guessed the word! The word was '" + guessingWord + "'. Play again?");
+      function printRemainingLetters(remainingLetters) {
+        return $("#guesses").text(remainingLetters);
       }
 
       function enableRestartButton() {
@@ -109,8 +113,8 @@
           }
           $(startGameComponent).hide();
           $(guessingWordComponent).show();
-          showNumberOfLetters();
-          showGuessedLetters();
+          printCorrespondingMessage(0, 1, 0, 0);
+          printCorrespondingMessage(1, 0, 0, 0);
         } 
   	    return false;
       } 
@@ -132,7 +136,7 @@
         }
         if (ok) {
           divClass += " alert-success";
-          showGuessedLetters();
+          printCorrespondingMessage(1, 0, 0, 0);
         } else {
           divClass += " alert-danger";
           playerLife--;
@@ -146,13 +150,13 @@
              </div>
             </div>
          `);
-        $("#lives").text(playerLife);
-        $("#guesses").text(remainingLetters);
+        printLives(playerLife);
+        printRemainingLetters(remainingLetters);
         if (remainingLetters <= 0) {
-          player2WinningMessage();
+          printCorrespondingMessage(0, 0, 0, 1);
           enableRestartButton();
         } else if (playerLife <= 0) {
-          player1WinningMessage();
+          printCorrespondingMessage(0, 0, 1, 0);
           enableRestartButton();
         }
         return false;
